@@ -1,11 +1,23 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
-from db.database import collection_visitor, collection_dream
+from db.database import collection_visitor, collection_dream, collection_feedback
 from schemas.visitor import VisitorData
 from schemas.dream import DreamData
+from schemas.feedback import FeedbackData
 
 app = FastAPI()
+
+origins = ["*"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -34,3 +46,11 @@ async def get_dreams():
     response = await collection_dream.find().to_list(1000)
     
     return response
+
+@app.post("/feedback", response_model=FeedbackData)
+async def submit_feedback(payload: FeedbackData):
+    if any(value is None or value == "" for value in payload.dict().values()):
+        raise HTTPException(400, "Invalid payload. All fields must be filled.")
+    await collection_feedback.insert_one(dict(payload))
+    
+    return payload

@@ -2,6 +2,7 @@ import motor.motor_asyncio
 from pymongo.collection import Collection
 from models.visitor import Visitor
 from models.dream import Dream
+from models.feedback import Feedback
 
 from config.config import settings
 
@@ -10,3 +11,4 @@ client = motor.motor_asyncio.AsyncIOMotorClient(
 db = client['asa-cerita-wanita']
 collection_visitor: Collection[Visitor] = db['visitor']
 collection_dream: Collection[Dream] = db['dream']
+collection_feedback: Collection[Feedback] = db['feedback']
