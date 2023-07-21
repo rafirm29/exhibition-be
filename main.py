@@ -54,3 +54,15 @@ async def submit_feedback(payload: FeedbackData):
     await collection_feedback.insert_one(dict(payload))
     
     return payload
+
+@app.get("/visitor", response_model=List[VisitorData])
+async def get_visitors():
+    response = await collection_visitor.find().to_list(1000)
+    
+    return response
+
+@app.get("/feedback", response_model=List[FeedbackData])
+async def get_feedback():
+    response = await collection_feedback.find().to_list(1000)
+    
+    return response
